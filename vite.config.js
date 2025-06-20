@@ -1,5 +1,8 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: './', // ensures proper asset resolution
-})
+  base: './',
+  build: {
+    outDir: 'dist', // this tells Vercel where to find the built site
+  },
+});
