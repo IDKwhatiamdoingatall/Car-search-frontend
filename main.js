@@ -1,16 +1,23 @@
-document.getElementById("searchBtn").addEventListener("click", async () => {
-  const query = document.getElementById("query").value.trim();
+let currentPage = 1;
+let currentQuery = "";
 
-  // Block empty searches
-  if (!query) {
+document.getElementById("searchBtn").addEventListener("click", async () => {
+  currentPage = 1;
+  currentQuery = document.getElementById("query").value.trim();
+
+  if (!currentQuery) {
     alert("Please enter a search term.");
     return;
   }
 
+  await fetchResults(currentQuery, currentPage);
+});
+
+async function fetchResults(query, page) {
   const res = await fetch(`${import.meta.env.VITE_API_URL}/search`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query }),
+    body: JSON.stringify({ query, page }),
   });
 
   const data = await res.json();
@@ -23,7 +30,14 @@ document.getElementById("searchBtn").addEventListener("click", async () => {
       item.innerHTML = `<h3><a href="${link}" target="_blank">${title}</a></h3><p>${snippet}</p>`;
       resultsDiv.appendChild(item);
     });
+    document.getElementById("nextPageBtn").style.display = "block";
   } else {
     resultsDiv.innerText = "No results found or an error occurred.";
+    document.getElementById("nextPageBtn").style.display = "none";
   }
+}
+
+document.getElementById("nextPageBtn").addEventListener("click", async () => {
+  currentPage++;
+  await fetchResults(currentQuery, currentPage);
 });
