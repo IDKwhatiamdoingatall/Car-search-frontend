@@ -30,14 +30,24 @@ async function fetchResults(query, page) {
       item.innerHTML = `<h3><a href="${link}" target="_blank">${title}</a></h3><p>${snippet}</p>`;
       resultsDiv.appendChild(item);
     });
-    document.getElementById("nextPageBtn").style.display = "block";
+    document.getElementById("pagination").style.display = "block";
   } else {
     resultsDiv.innerText = "No results found or an error occurred.";
-    document.getElementById("nextPageBtn").style.display = "none";
+    document.getElementById("pagination").style.display = "none";
   }
+
+  // Disable the Previous button on page 1
+  document.getElementById("prevPageBtn").disabled = currentPage === 1;
 }
 
 document.getElementById("nextPageBtn").addEventListener("click", async () => {
   currentPage++;
   await fetchResults(currentQuery, currentPage);
+});
+
+document.getElementById("prevPageBtn").addEventListener("click", async () => {
+  if (currentPage > 1) {
+    currentPage--;
+    await fetchResults(currentQuery, currentPage);
+  }
 });
